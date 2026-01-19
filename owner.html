@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>VAISHAK TAXI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background: url("b.png") no-repeat center center / cover;
+    padding:15px;
+}
+
+/* BOX */
+.box{
+    max-width:1200px;
+    margin:auto;
+    background-color: rgba(255,255,255,0.08);
+    backdrop-filter: blur(8px);
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 10px 20px rgba(255, 255, 255, 0.2);
+    margin-bottom:20px;
+}
+
+.hidden{display:none}
+
+input,button{
+    padding:10px;
+    margin:6px 0;
+    width:100%;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+button{
+    background:#00bcd4;
+    border:none;
+    cursor:pointer;
+    color:#fff;
+}
+
+button.reject{
+    background:red;
+}
+
+/* TABLE */
+.table-wrap{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+    min-width:900px;
+}
+
+th,td{
+    padding:10px;
+    border-bottom:1px solid #ccc;
+    text-align:center;
+}
+
+th{
+    background:#ffffff;
+    font-weight:bold;
+}
+
+/* HEADINGS */
+h2,h4{
+    text-align:center;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+
+    body{
+        padding:10px;
+    }
+
+    h2{
+        font-size:26px !important;
+    }
+
+    input,button{
+        font-size:14px;
+    }
+
+    table{
+        font-size:14px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div class="box" id="loginBox">
+<h2 style="color: rgb(255, 149, 0);">TAXI OWNER</h2>
+
+<input id="luser" placeholder="Username">
+<input id="lpass" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+
+<p style="text-align:center;margin-top:10px;">
+<a href="#" onclick="showRegister()" style="color: rgb(255, 179, 0);">New Owner?</a> |
+<a href="#" onclick="showForgot()" style="color: rgb(255, 187, 0);">Forgot Password</a>
+</p>
+
+<p id="msg" style="text-align:center;color:red;"></p>
+</div>
+
+<!-- REGISTER -->
+<div class="box hidden" id="registerBox">
+<h2 style="color: rgb(0, 162, 255);">Register Owner</h2>
+
+<input id="ruser" placeholder="Username">
+<input id="rpass" type="password" placeholder="Password">
+<input id="rphone" placeholder="Registered Phone Number">
+
+<button onclick="register()">Register</button>
+</div>
+
+<!-- FORGOT PASSWORD -->
+<div class="box hidden" id="forgotBox">
+<h2 style="color:#fff;">Forgot Password</h2>
+
+<button onclick="sendOTP()">Send OTP</button>
+<p id="otpMsg" style="color:#fff;"></p>
+
+<input id="otpInput" placeholder="Enter OTP">
+<input id="newPass" type="password" placeholder="New Password">
+
+<button onclick="resetPass()">Reset Password</button>
+</div>
+
+<!-- DASHBOARD -->
+<div class="box hidden" id="dashboard">
+
+<h2 style="
+font-family:'Permanent Marker', cursive;
+font-size:48px;
+color:rgb(255,128,0);
+letter-spacing:2px;
+">TAXI</h2>
+
+<h4 style="color:#fff;margin-top:10px;">OWNER WHATSAPP NUMBER</h4>
+<input id="num">
+<button onclick="saveNumber()">Save</button>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Pickup</th>
+<th>Drop</th>
+<th>KM</th>
+<th>Fare</th>
+<th>Date & Time</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="table"></tbody>
+</table>
+</div>
+
+</div>
+
+<script>
+let OTP = "";
+
+/* SHOW SECTIONS */
+function showRegister(){
+    document.getElementById("loginBox").classList.add("hidden");
+    document.getElementById("registerBox").classList.remove("hidden");
+}
+function showForgot(){
+    document.getElementById("loginBox").classList.add("hidden");
+    document.getElementById("forgotBox").classList.remove("hidden");
+}
+
+/* REGISTER */
+function register(){
+    localStorage.setItem("ownerUser", ruser.value);
+    localStorage.setItem("ownerPass", rpass.value);
+    localStorage.setItem("ownerPhone", rphone.value);
+    alert("Owner Registered Successfully");
+    location.reload();
+}
+
+/* LOGIN */
+function login(){
+    if(
+        luser.value === localStorage.getItem("ownerUser") &&
+        lpass.value === localStorage.getItem("ownerPass")
+    ){
+        loginBox.classList.add("hidden");
+        dashboard.classList.remove("hidden");
+        loadBookings();
+    }else{
+        msg.innerText = "Invalid login";
+    }
+}
+
+/* OTP = LAST 3 DIGITS */
+function sendOTP(){
+    const phone = localStorage.getItem("ownerPhone");
+
+    if(!phone || phone.length < 3){
+        otpMsg.innerText = "No registered number found";
+        return;
+    }
+
+    OTP = phone.slice(-3);
+    otpMsg.innerText = "OTP sent to registered number";
+}
+
+/* RESET PASSWORD */
+function resetPass(){
+    if(otpInput.value === OTP){
+        localStorage.setItem("ownerPass", newPass.value);
+        alert("Password reset successful");
+        location.reload();
+    }else{
+        alert("Invalid OTP");
+    }
+}
+
+/* SAVE OWNER NUMBER */
+function saveNumber(){
+    localStorage.setItem("ownerNumber", num.value);
+    alert("Number saved");
+}
+
+/* LOAD BOOKINGS */
+function loadBookings(){
+    num.value = localStorage.getItem("ownerNumber") || "";
+    let b = JSON.parse(localStorage.getItem("bookings")) || [];
+    table.innerHTML = "";
+
+    b.forEach((x,i)=>{
+        table.innerHTML += `
+        <tr>
+            <td>${x.name}</td>
+            <td>${x.pickup}</td>
+            <td>${x.drop}</td>
+            <td>${x.distance || "-"}</td>
+            <td>${x.fare ? "₹"+x.fare : "-"}</td>
+            <td>${x.createdAt}</td>
+            <td>${x.status || "Pending"}</td>
+            <td>
+                <button onclick="confirm(${i})">Confirm</button>
+                <button class="reject" onclick="reject(${i})">Reject</button>
+                <button onclick="del(${i})">Delete</button>
+            </td>
+        </tr>`;
+    });
+}
+
+function confirm(i){
+    let b = JSON.parse(localStorage.getItem("bookings"));
+    b[i].status = "Confirmed";
+    localStorage.setItem("bookings", JSON.stringify(b));
+    window.open(`https://wa.me/${b[i].phone}?text=Your cab booking is CONFIRMED`);
+    loadBookings();
+}
+
+function reject(i){
+    let b = JSON.parse(localStorage.getItem("bookings"));
+    b[i].status = "Rejected";
+    localStorage.setItem("bookings", JSON.stringify(b));
+    window.open(`https://wa.me/${b[i].phone}?text=Sorry, your booking is REJECTED`);
+    loadBookings();
+}
+
+function del(i){
+    let b = JSON.parse(localStorage.getItem("bookings"));
+    b.splice(i,1);
+    localStorage.setItem("bookings", JSON.stringify(b));
+    loadBookings();
+}
+</script>
+
+</body>
+</html>

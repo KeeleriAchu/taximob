@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VAISHAK's CAB</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background: url("a.png") no-repeat center center / cover;
+}
+
+/* HEADER */
+header{
+    background-color: transparent;
+    backdrop-filter: blur(4px);
+    color:#000;
+    padding:15px 20px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position: relative;
+    text-align:center;
+}
+
+.title-box{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+header a{
+    position:absolute;
+    right:20px;
+    color:#000;
+    text-decoration:none;
+    font-size:14px;
+}
+
+/* MAIN */
+.main{
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    min-height:calc(100vh - 120px);
+    padding:20px 60px;
+}
+
+/* FORM */
+.form{
+    width:420px;
+    background:#fff;
+    padding:30px;
+    border-radius:18px;
+    box-shadow:0 15px 30px rgba(0,0,0,0.3);
+}
+
+.form h3{
+    text-align:center;
+    margin-bottom:15px;
+    color:#0004ff;
+}
+
+.form input,
+.form button{
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+.form button{
+    background:#00bcd4;
+    border:none;
+    font-size:16px;
+    cursor:pointer;
+    color:#fff;
+}
+
+.form button:hover{
+    background:#0097a7;
+}
+
+/* CONTACT BOX */
+.contact-box{
+    margin-top:20px;
+    padding:15px;
+    background:#e0f7fa;
+    border-radius:12px;
+    text-align:center;
+}
+
+.contact-box h4{
+    margin-bottom:10px;
+    color:#007c91;
+}
+
+.contact-box p{
+    font-size:15px;
+    margin:6px 0;
+}
+
+.contact-box a{
+    color:#007c91;
+    font-weight:bold;
+    text-decoration:none;
+}
+
+.contact-box a:hover{
+    text-decoration:underline;
+}
+
+.service-note{
+    margin-top:8px;
+    font-size:13px;
+    color:#444;
+}
+
+/* FOOTER */
+footer{
+    background:rgba(0,0,0,0.85);
+    color:#aaa;
+    text-align:center;
+    padding:10px;
+    font-size:14px;
+}
+
+/* ✅ MOBILE FIXES */
+@media(max-width:768px){
+
+    header a{
+        font-size:13px;
+        right:10px;
+    }
+
+    .title-box h2{
+        font-size:42px !important;
+    }
+
+    .title-box p{
+        font-size:14px;
+    }
+
+    .main{
+        padding:20px;
+        justify-content:center;
+    }
+
+    .form{
+        width:100%;
+        max-width:380px;
+        padding:25px;
+    }
+
+    footer{
+        position:static;
+        margin-top:20px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="title-box">
+        <h2 style="font-family:'Permanent Marker', cursive; font-size:60px;">
+            VAISHAK
+        </h2>
+        <p style="color:#1500ff;">
+            All-India permit taxi you can trust.
+        </p>
+    </div>
+    <a href="owner.html">Owner Login</a>
+</header>
+
+<div class="main">
+<div class="form">
+
+<h3>“Comfortable rides for every mile of India”</h3>
+
+<input id="custName" placeholder="Customer Name" required>
+<input id="phone" placeholder="WhatsApp Number" required>
+<input id="pickup" placeholder="Pickup Location" required>
+<input id="drop" placeholder="Drop Location" required>
+
+<button onclick="bookCab()">Book Cab via WhatsApp</button>
+
+<!-- CONTACT DETAILS -->
+<div class="contact-box">
+    <h4>Contact Us</h4>
+    <p>📞 Call: <a id="callLink"></a></p>
+    <p>💬 WhatsApp: <a id="waLink" target="_blank">Chat on WhatsApp</a></p>
+    <p class="service-note">🚖 All-India Permit • 24/7 Service</p>
+</div>
+
+</div>
+</div>
+
+<footer>
+© 2026 Safe rides, transparent pricing, nationwide service.
+</footer>
+
+<script>
+const ownerNumber =
+    localStorage.getItem("ownerNumber") || "919876543210";
+
+document.getElementById("callLink").href = "tel:+" + ownerNumber;
+document.getElementById("callLink").innerText =
+    "+" + ownerNumber.slice(0,2) + " " +
+    ownerNumber.slice(2,7) + " " +
+    ownerNumber.slice(7);
+
+document.getElementById("waLink").href =
+    "https://wa.me/" + ownerNumber;
+
+function bookCab(){
+
+    const custName = document.getElementById("custName").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const pickup = document.getElementById("pickup").value.trim();
+    const drop = document.getElementById("drop").value.trim();
+
+    if(!custName || !phone || !pickup || !drop){
+        alert("Please fill all details");
+        return;
+    }
+
+    const message =
+`🚖 Cab Booking Request
+Name: ${custName}
+Phone: ${phone}
+Pickup: ${pickup}
+Drop: ${drop}`;
+
+    window.open(
+        `https://wa.me/${ownerNumber}?text=${encodeURIComponent(message)}`,
+        "_blank"
+    );
+}
+</script>
+
+</body>
+</html>
